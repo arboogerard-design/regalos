@@ -1,0 +1,30 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>GALERIA · prompt</title><style>:root{--bg:#0d0d0f;--tx:#ececec;--mu:#9a9aa2;--ac:#ff5a1f;--card:#17171b}body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:720px;margin:auto;padding:40px 16px 80px}h1{font-size:30px;line-height:1.2}h2{font-size:21px;margin-top:36px}a{color:var(--ac)}pre{background:var(--card);border:1px solid #2a2a30;border-radius:12px;padding:16px;white-space:pre-wrap;font-size:14.5px;position:relative}code{font-family:ui-monospace,Consolas,monospace}button.cp{position:absolute;top:8px;right:8px;background:var(--ac);color:#fff;border:0;border-radius:8px;padding:6px 10px;font-weight:600;cursor:pointer}.pie{color:var(--mu);font-size:14px;margin-top:48px;border-top:1px solid #2a2a30;padding-top:16px}</style></head><body><main><h1>GALERIA · el prompt de la web 3D</h1>
+<p>Probado el 23-nov-2026: con este método salió https://arboogerard-design.github.io/clipeya-web-v4/
+Herramientas: Claude Code + three.js (r160, por CDN) + la skill hallmark (github.com/Nutlope/hallmark, MIT) para que no parezca plantilla.</p>
+<h2>Prompt (pegar en Claude Code, dentro de una carpeta con tus capturas en /obras)</h2>
+<pre><code>Hazme una landing de una sola página con una galería 3D circular hecha con three.js r160 (módulo por CDN, sin build).
+
+ESCENA
+- Un anillo de radio 6,2 con dos filas de paneles curvos (CylinderGeometry abierto, cara interior con BackSide; dale la vuelta a la textura con repeat.x=-1 y offset.x=1 para que no salga en espejo).
+- En cada panel, una captura real de /obras con su proporción (móvil 420x909, ordenador 1,6). Si hay vídeos, como VideoTexture, con el cartel primero.
+- Fondo casi negro, niebla, un brillo radial de color de acento en el suelo, una línea de anillo y polvo de puntos.
+
+CÁMARA CON EL SCROLL
+- Cada &lt;section data-vista=&quot;...&quot;&gt; es un plano.
+- &quot;arriba&quot;: vista desde fuera, girando despacio.
+- &quot;obra:id&quot;: dentro del anillo, delante de ese panel.
+- En ordenador, el panel queda al 68 % del ancho (gira la vista atan(0,36·tanV·aspecto)) y el texto a la izquierda; en móvil, el panel arriba y el texto debajo.
+- Entre plano y plano: interpolación con easeInOutCubic, una pausa al principio y al final de cada tramo, y lerp amortiguado (1-exp(-dt·3,2)).
+- El panel enfocado a brillo 1; el resto, apagado.
+
+QUE SE LEA SIN 3D
+- Todo el texto va en el HTML; una imagen fija de respaldo debajo del canvas.
+- Si no hay WebGL, se quita el canvas.
+- Con prefers-reduced-motion no se mueve.
+
+ACABADO
+Aplica la skill hallmark: tokens en :root, sin transition: all, :focus-visible, reduced-motion, hero visible a 1280x800. Pasa scripts/sloplint.mjs --render hasta 0 FAIL.
+
+PRUEBA
+Capturas a 390 y 1440 con Playwright (Chrome con --use-angle=swiftshader). Cero errores de consola, cero scroll lateral y cero imágenes rotas.
+</code></pre><p class="pie">Regalo de <a href="https://instagram.com/gerardleon.ai">@gerardleon.ai</a></p></main><script>document.querySelectorAll('pre').forEach(p=>{const b=document.createElement('button');b.className='cp';b.textContent='Copiar';b.onclick=()=>{navigator.clipboard.writeText(p.innerText.replace(/^Copiar/,'').replace(/Copiar$/,'').trim());b.textContent='Copiado';setTimeout(()=>b.textContent='Copiar',1500)};p.appendChild(b)})</script></body></html>

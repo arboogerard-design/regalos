@@ -1,0 +1,184 @@
+<!doctype html>
+<!-- lampara.html · P2 25-nov · tarea 11: acceso con lámpara de pie. Tiras del cordón, se enciende la luz y aparece el formulario.
+     Qué entra: nada (un solo HTML, sin librerías). Qué sale: la web. Modo interactivo por defecto (clic en el cordón o tecla L).
+     Modo vídeo: window.pinta(t) pinta el instante t (0–5,4 s) sin reloj, para grabar fotograma a fotograma.
+     Cómo se prueba: abrir y hacer clic en el cordón → se enciende; otra vez → se apaga. El formulario no envía nada. -->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acceso · lámpara</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --luz: 0; --tarjeta: 0; --ambar: #f2b36b; --ambar2: #e88a3c; --texto: #efe6da; --tenue: #8d8173; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; background: #060504; overflow: hidden; font-family: Inter, system-ui, sans-serif; color: var(--texto); }
+  .escena { position: relative; width: 100vw; height: 100vh; min-height: 560px; overflow: hidden;
+    background: radial-gradient(70% 90% at 24% 30%, rgba(120, 74, 34, calc(var(--luz) * .55)), transparent 70%), #060504; }
+  .suelo { position: absolute; left: 0; right: 0; bottom: 0; height: 22%; background: radial-gradient(45% 60% at 22% 30%, rgba(150, 95, 45, calc(var(--luz) * .35)), transparent 75%); }
+  .marca { position: absolute; left: 2.2vw; top: 2.6vh; font-size: 11px; letter-spacing: .32em; color: rgba(239, 230, 218, calc(.25 + var(--luz) * .35)); }
+  .lampara { position: absolute; left: 22.2%; top: 18%; width: 0; height: 0; }
+  .cono {
+    clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
+    background: linear-gradient(#ffcf8a99, transparent);
+    opacity: var(--luz);
+  }
+  .cono { position: absolute; left: -330px; top: 112px; width: 660px; height: 560px; filter: blur(10px); mix-blend-mode: screen; scale: 1 1; -webkit-mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); mask: linear-gradient(#000 40%, rgba(0,0,0,.35)); }
+  .cono { background: linear-gradient(rgba(255, 184, 107, calc(var(--luz) * .55)), rgba(255, 160, 80, .04) 85%); opacity: 1; }
+  .halo { position: absolute; left: -260px; top: -120px; width: 520px; height: 420px; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(255, 196, 120, .35), transparent); opacity: var(--luz); }
+  .pantalla { position: absolute; left: -110px; top: 0; width: 220px; height: 120px;
+    clip-path: polygon(17% 0, 83% 0, 100% 100%, 0 100%);
+    background: linear-gradient(90deg, hsl(28 calc(20% + var(--luz) * 45%) calc(14% + var(--luz) * 36%)), hsl(33 calc(30% + var(--luz) * 55%) calc(20% + var(--luz) * 46%)) 45%, hsl(27 calc(25% + var(--luz) * 40%) calc(12% + var(--luz) * 30%)));
+    box-shadow: 0 0 calc(var(--luz) * 60px) rgba(255, 170, 90, calc(var(--luz) * .35)); }
+  .bombilla { position: absolute; left: -17px; top: 112px; width: 34px; height: 34px; border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, hsl(40 90% calc(30% + var(--luz) * 65%)), hsl(32 50% calc(14% + var(--luz) * 40%)));
+    box-shadow: 0 0 calc(var(--luz) * 40px) calc(var(--luz) * 10px) rgba(255, 200, 120, calc(var(--luz) * .7)); }
+  .poste { position: absolute; left: -5px; top: 140px; width: 10px; height: 430px; background: linear-gradient(90deg, #1a1714, #3a332c 45%, #121010); border-radius: 4px; }
+  .anillo { position: absolute; left: -8px; top: 330px; width: 16px; height: 12px; border-radius: 3px; background: linear-gradient(90deg, #6d5532, #c9a265 50%, #5a4426); }
+  .base { position: absolute; left: -64px; top: 562px; width: 128px; height: 26px; border-radius: 50%; background: radial-gradient(#2a2420, #0c0a09 70%); box-shadow: 0 6px 18px rgba(0, 0, 0, .6); }
+  .cordon { position: absolute; left: 50px; top: 118px; overflow: visible; cursor: grab; }
+  .pista { position: absolute; left: 120px; top: 330px; font-size: 10px; letter-spacing: .28em; white-space: nowrap; color: rgba(239, 230, 218, .45); }
+  .motas i { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #ffd9a6; opacity: calc(var(--luz) * .5); }
+  .tarjeta { position: absolute; right: 13.5%; top: 50%; width: 420px; transform: translateY(calc(-50% + (1 - var(--tarjeta)) * 14px)); opacity: var(--tarjeta);
+    padding: 32px 26px 22px; border-radius: 16px; background: rgba(22, 17, 13, .72); border: 1px solid rgba(255, 205, 150, .12);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .55), inset 0 1px rgba(255, 230, 200, .06); backdrop-filter: blur(8px); pointer-events: auto; }
+  .tarjeta[aria-hidden="true"] { pointer-events: none; }
+  .eti { font-size: 10px; letter-spacing: .3em; color: var(--ambar); opacity: .8; }
+  h1 { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 40px; line-height: 1.04; margin: 14px 0 26px; }
+  h1 em { color: #d9b48a; }
+  label { display: block; font-size: 10px; letter-spacing: .24em; color: var(--tenue); margin: 0 0 8px; }
+  .campo { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 14px; border-radius: 9px; margin-bottom: 18px;
+    background: rgba(255, 255, 255, .035); border: 1px solid rgba(255, 255, 255, .08); font-size: 14px; color: var(--texto); }
+  .campo.activo { border-color: rgba(242, 179, 107, .7); box-shadow: 0 0 0 3px rgba(242, 179, 107, .12); }
+  .campo input { all: unset; flex: 1; font: inherit; color: inherit; }
+  .campo input::placeholder { color: #5f564c; }
+  .campo svg { flex: none; opacity: .6; }
+  .ver { font-size: 10px; letter-spacing: .2em; color: var(--tenue); cursor: pointer; }
+  .fila { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--tenue); margin: -2px 0 20px; }
+  .fila a { color: var(--ambar); text-decoration: underline; text-underline-offset: 3px; }
+  .check { display: inline-flex; gap: 8px; align-items: center; }
+  .check b { width: 14px; height: 14px; border-radius: 3px; background: var(--ambar2); display: inline-block; }
+  .boton { width: 100%; height: 46px; border: 0; border-radius: 10px; font: 600 14px Inter, sans-serif; color: #2a1606; cursor: pointer;
+    background: linear-gradient(180deg, #f8c88a, #e8964a); box-shadow: 0 8px 24px rgba(232, 150, 74, calc(.2 + var(--hover, 0) * .35)); transform: translateY(calc(var(--hover, 0) * -2px)); }
+  .o { display: flex; align-items: center; gap: 12px; font-size: 10px; letter-spacing: .3em; color: #5f564c; margin: 18px 0; }
+  .o::before, .o::after { content: ''; flex: 1; height: 1px; background: rgba(255, 255, 255, .08); }
+  .secundario { width: 100%; height: 42px; border-radius: 10px; background: rgba(255, 255, 255, .03); border: 1px solid rgba(255, 255, 255, .09); color: var(--texto); font: 500 13px Inter, sans-serif; cursor: pointer; }
+  .pie { margin-top: 18px; font-size: 11px; color: #6d6358; }
+  .pie a { color: var(--ambar); }
+  .caret { display: inline-block; width: 1px; height: 16px; background: var(--ambar); vertical-align: middle; }
+  .raton { position: absolute; width: 22px; height: 22px; pointer-events: none; opacity: 0; }
+  @media (max-width: 860px) { .lampara { left: 50%; top: 6%; transform: scale(.7); transform-origin: top center; } .tarjeta { right: 50%; transform: translate(50%, calc(-30% + (1 - var(--tarjeta)) * 14px)); width: min(420px, 92vw); top: 58%; } .pista { display: none; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main class="escena" id="escena">
+  <div class="suelo"></div>
+  <div class="marca">ESTUDIO · ACCESO</div>
+  <div class="motas" id="motas"></div>
+  <div class="lampara">
+    <div class="halo"></div>
+    <div class="cono"></div>
+    <div class="poste"></div><div class="anillo"></div><div class="base"></div>
+    <div class="pantalla"></div>
+    <div class="bombilla"></div>
+    <svg class="cordon" id="cordon" width="80" height="200" viewBox="0 0 80 200" role="button" aria-label="Tirar del cordón para encender o apagar la luz" tabindex="0">
+      <path id="hilo" d="M0 0 Q 8 60 20 120" stroke="#d8c7ad" stroke-width="1.6" fill="none"/>
+      <circle id="bola" cx="20" cy="120" r="4" fill="#d8c7ad"/>
+    </svg>
+    <div class="pista" id="pista">← TIRA DEL CORDÓN</div>
+  </div>
+
+  <form class="tarjeta" id="tarjeta" aria-hidden="true" onsubmit="event.preventDefault()">
+    <div class="eti">ACCESO AL ESTUDIO</div>
+    <h1>Hola de nuevo.<br><em>Pasa y siéntate.</em></h1>
+    <label for="correo">CORREO</label>
+    <div class="campo" id="campoCorreo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f2b36b" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+      <input id="correo" type="email" placeholder="tu@correo.es" autocomplete="off"></div>
+    <label for="clave">CONTRASEÑA</label>
+    <div class="campo" id="campoClave"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8d8173" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+      <input id="clave" type="password" placeholder="••••••••" autocomplete="off"><span class="ver">VER</span></div>
+    <div class="fila"><span class="check"><b></b>Recordarme</span><a href="#">¿La olvidaste?</a></div>
+    <button class="boton" id="boton" type="submit">Entrar</button>
+    <div class="o">O</div>
+    <button class="secundario" type="button">Entrar con un enlace al correo</button>
+    <div class="pie">¿Sin cuenta? <a href="#">Pídela</a> · Demo: no se envía nada.</div>
+  </form>
+  <svg class="raton" id="raton" viewBox="0 0 24 24"><path d="M4 2 L4 19 L9 14.5 L12.5 22 L15.5 20.6 L12 13.3 L18.5 13.3 Z" fill="#fff" stroke="#111" stroke-width="1.2"/></svg>
+</main>
+<script>
+const raiz = document.documentElement, $ = (id) => document.getElementById(id);
+const suave = (x) => { x = Math.min(1, Math.max(0, x)); return x * x * (3 - 2 * x); };
+const tramo = (t, a, b) => suave((t - a) / (b - a));
+// motas de polvo fijas (deterministas), solo se ven con la luz
+(() => { let h = ''; for (let i = 0; i < 46; i++) { const x = 8 + ((i * 53) % 34), y = 22 + ((i * 37) % 60); h += `<i style="left:${x}%;top:${y}%;opacity:calc(var(--luz) * ${(0.2 + (i % 5) * 0.12).toFixed(2)})"></i>`; } $('motas').innerHTML = h; })();
+
+// cordón: tirón (0–1) y balanceo (ángulo) → curva del hilo
+function cordon(tiron, angulo) {
+  const largo = 120 + tiron * 26, x = 20 + Math.sin(angulo) * 26, y = largo * Math.cos(angulo * 0.6);
+  $('hilo').setAttribute('d', `M0 0 Q ${8 + x * 0.2} ${y * 0.5} ${x} ${y}`); $('bola').setAttribute('cx', x); $('bola').setAttribute('cy', y);
+}
+function aplica(luz, tarjeta) {
+  raiz.style.setProperty('--luz', luz.toFixed(3)); raiz.style.setProperty('--tarjeta', tarjeta.toFixed(3));
+  $('tarjeta').setAttribute('aria-hidden', tarjeta < 0.5 ? 'true' : 'false');
+  $('pista').textContent = luz > 0.5 ? '← TIRA OTRA VEZ PARA APAGAR' : '← TIRA DEL CORDÓN';
+}
+
+// ── modo interactivo ──
+let encendida = false, inicio = -1e9, tiroEn = -1e9, modoVideo = false;
+function tirar() {
+  encendida = !encendida;
+  inicio = performance.now();
+  tiroEn = inicio;
+}
+$('cordon').addEventListener('click', tirar);
+$('cordon').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tirar(); } });
+addEventListener('keydown', (e) => { if (e.key.toLowerCase() === 'l' && e.target.tagName !== 'INPUT') tirar(); });
+function bucle(ahora) {
+  if (modoVideo) return;
+  const d = (ahora - inicio) / 1000, s = (ahora - tiroEn) / 1000;
+  const luz = encendida ? parpadeo(d) : 1 - tramo(d, 0, 0.35), tarjeta = encendida ? tramo(d, 0.5, 1.0) : 1 - tramo(d, 0, 0.3);
+  aplica(luz, tarjeta);
+  cordon(Math.max(0, 1 - Math.abs(s - 0.18) / 0.18), Math.exp(-s * 1.6) * Math.sin(s * 7) * 0.35 * (s > 0.3));
+  requestAnimationFrame(bucle);
+}
+function parpadeo(d) { if (d < 0.08) return 0.3 * tramo(d, 0, 0.08); if (d < 0.16) return 0.08; if (d < 0.26) return 0.55; if (d < 0.32) return 0.25; return 0.25 + 0.75 * tramo(d, 0.32, 0.8); }
+requestAnimationFrame(bucle);
+
+// ── modo vídeo: el guion de 5,4 s, igual que la referencia en tiempos ──
+const CORREO = 'hola@estudio.es';
+window.DUR = 5.4;
+window.pinta = function (t) {
+  modoVideo = true;
+  const luz = t < 0.95 ? 0 : t < 4.15 ? parpadeo(t - 0.95) : 1 - tramo(t, 4.15, 4.5);
+  const tarjeta = tramo(t, 1.5, 2.0) * (1 - tramo(t, 3.95, 4.35));
+  aplica(luz, tarjeta);
+  // dos tirones: 0,5 s (enciende) y 3,85 s (apaga); balanceo amortiguado después de cada uno
+  const t1 = t - 0.5, t2 = t - 3.85, ti = (x) => (x > 0 && x < 0.36 ? 1 - Math.abs(x - 0.18) / 0.18 : 0), bal = (x) => (x > 0.3 ? Math.exp(-x * 1.4) * Math.sin(x * 7) * 0.35 : 0);
+  cordon(Math.max(ti(t1), ti(t2)), t2 > 0.3 ? bal(t2) : bal(t1));
+  // escribe el correo (2,0–2,7) y la contraseña (2,8–3,2)
+  const nC = Math.round(CORREO.length * tramo(t, 2.0, 2.7)), nK = Math.round(8 * tramo(t, 2.8, 3.2));
+  $('correo').value = CORREO.slice(0, nC); $('clave').value = 'x'.repeat(nK);
+  $('campoCorreo').classList.toggle('activo', t > 1.95 && t < 2.75); $('campoClave').classList.toggle('activo', t >= 2.75 && t < 3.3);
+  raiz.style.setProperty('--hover', (tramo(t, 3.3, 3.45) * (1 - tramo(t, 3.6, 3.7))).toFixed(3));
+  // ratón: del botón al cordón, tira y se queda
+  const r = $('raton'), b = $('boton').getBoundingClientRect(), c = $('bola').getBoundingClientRect();
+  const p0 = [innerWidth * 0.55, innerHeight * 0.8], pB = [b.left + b.width * 0.6, b.top + b.height * 0.5], pC = [c.left + 2, c.top + 2];
+  let p, op = 1;
+  if (t < 0.2) { p = [pC[0] + 160, pC[1] + 120]; op = tramo(t, 0, 0.2); }
+  else if (t < 0.5) { const k = tramo(t, 0.2, 0.5); p = [pC[0] + 160 * (1 - k), pC[1] + 120 * (1 - k)]; }
+  else if (t < 0.86) { p = [pC[0], pC[1] + 26 * ti(t1)]; }
+  else if (t < 1.9) { const k = tramo(t, 0.9, 1.9); p = [pC[0] + (p0[0] - pC[0]) * k, pC[1] + (p0[1] - pC[1]) * k]; op = 1 - tramo(t, 1.5, 1.9); }
+  else if (t < 3.2) { p = pB; op = 0; }
+  else if (t < 3.4) { p = pB; op = tramo(t, 3.2, 3.3); }
+  else if (t < 3.85) { const k = tramo(t, 3.4, 3.85); p = [pB[0] + (pC[0] - pB[0]) * k, pB[1] + (pC[1] - pB[1]) * k]; }
+  else { p = [pC[0], pC[1] + 26 * ti(t2)]; }
+  r.style.left = p[0] + 'px'; r.style.top = p[1] + 'px'; r.style.opacity = op;
+  $('correo').setAttribute('placeholder', nC ? '' : 'tu@correo.es');
+};
+</script>
+</body>
+</html>

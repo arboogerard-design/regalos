@@ -1,0 +1,29 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>MOTION · 4 prompts</title><style>:root{--bg:#0d0d0f;--tx:#ececec;--mu:#9a9aa2;--ac:#ff5a1f;--card:#17171b}body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:720px;margin:auto;padding:40px 16px 80px}h1{font-size:30px;line-height:1.2}h2{font-size:21px;margin-top:36px}a{color:var(--ac)}pre{background:var(--card);border:1px solid #2a2a30;border-radius:12px;padding:16px;white-space:pre-wrap;font-size:14.5px;position:relative}code{font-family:ui-monospace,Consolas,monospace}button.cp{position:absolute;top:8px;right:8px;background:var(--ac);color:#fff;border:0;border-radius:8px;padding:6px 10px;font-weight:600;cursor:pointer}.pie{color:var(--mu);font-size:14px;margin-top:48px;border-top:1px solid #2a2a30;padding-top:16px}</style></head><body><main><h1>4 movimientos que hacen que tu web parezca cara</h1>
+<p>El truco no es saber programar: es saber cómo se llama lo que quieres. Pega cada prompt en Claude (o tu IA) con tu web abierta en el proyecto.
+Abre la <a href="demo.html">demo</a> para ver los cuatro funcionando antes de pedirlos.</p>
+<h2>1. Fundido entre pestañas (crossfade)</h2>
+<p>Sin él, al cambiar de pestaña el contenido da un salto.</p>
+<pre><code>En las pestañas de [sección], cuando cambio de pestaña, que el contenido viejo se desvanezca
+mientras el nuevo aparece a la vez (crossfade de 250 ms). Solo opacidad, sin mover nada de sitio.
+Si el usuario tiene activado &quot;reducir movimiento&quot;, cambio directo sin animación.
+</code></pre>
+<h2>2. Elemento compartido (shared element)</h2>
+<p>Tocas una tarjeta y su título viaja hasta arriba de la vista nueva: el ojo no se pierde.</p>
+<pre><code>Cuando toco una tarjeta de [productos/servicios], que su título y su foto viajen hasta su sitio
+en la vista de detalle (shared element transition, con la View Transitions API si el navegador la tiene;
+si no, cambio normal). Duración 300 ms. Con &quot;reducir movimiento&quot;, sin animación.
+</code></pre>
+<h2>3. Menú que crece al acercarte (magnificación tipo dock)</h2>
+<pre><code>En el menú de abajo, que los iconos crezcan al acercar el ratón: el más cercano hasta 1,5 veces
+y los vecinos un poco menos. En móvil, sin efecto (no hay ratón). Que no cambie el alto del menú.
+</code></pre>
+<h2>4. Foco en la cifra (blur de foco)</h2>
+<pre><code>En el bloque de [resultados/precio], al pasar por encima, desenfoca todo (4 px) menos la cifra
+que importa, que se queda nítida. Al salir, todo vuelve. En móvil, la cifra ya destacada sin desenfoque.
+</code></pre>
+<h2>Antes de darlo por bueno</h2>
+<ul>
+<li>[ ] Ábrelo en el móvil: nada se mueve de sitio ni tapa el texto.</li>
+<li>[ ] Con "reducir movimiento" activado en el sistema, todo funciona sin animaciones.</li>
+<li>[ ] La página no tarda más en cargar que antes.</li>
+</ul><p class="pie">Regalo de <a href="https://instagram.com/gerardleon.ai">@gerardleon.ai</a></p></main><script>document.querySelectorAll('pre').forEach(p=>{const b=document.createElement('button');b.className='cp';b.textContent='Copiar';b.onclick=()=>{navigator.clipboard.writeText(p.innerText.replace(/^Copiar/,'').replace(/Copiar$/,'').trim());b.textContent='Copiado';setTimeout(()=>b.textContent='Copiar',1500)};p.appendChild(b)})</script></body></html>

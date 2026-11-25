@@ -1,0 +1,58 @@
+<!doctype html>
+<!-- demo.html · los 4 movimientos de LOS_4_PROMPTS.md funcionando en una sola página (Clipeya, 21-nov-2026).
+     Entra: nada (página autónoma, sin librerías ni red). Sale: la demo para grabar la pantalla del reel.
+     Prueba: abrir en el navegador; con «reducir movimiento» activado, todo cambia sin animación. -->
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>4 movimientos · demo</title>
+<style>
+:root{--bg:#0d0d10;--card:#17171c;--line:#2a2a31;--tx:#f2efe8;--mut:#9a978f;--ac:#e8b04b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:980px;margin:0 auto;padding:32px 16px 140px}h1{font-size:clamp(28px,5vw,44px);margin:0 0 8px;letter-spacing:-.02em}
+h2{font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--ac);margin:48px 0 14px}p.s{color:var(--mut);margin:0}
+.tabs{display:flex;gap:8px;margin-bottom:12px}.tabs button{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:999px;padding:10px 18px;font:inherit;cursor:pointer}
+.tabs button[aria-selected=true]{border-color:var(--ac);color:var(--ac)}
+.panel{position:relative;min-height:150px}.pane{position:absolute;inset:0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;opacity:0;transition:opacity .25s ease;pointer-events:none}
+.pane.on{opacity:1;pointer-events:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;text-align:left;color:inherit;font:inherit}
+.ph{height:110px;border-radius:10px;margin-bottom:12px}.card h3{margin:0;font-size:18px}
+.det{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}.det .ph{height:220px}.det h3{font-size:30px;margin:0 0 6px}
+.det button{margin-top:14px;background:none;border:1px solid var(--line);color:var(--tx);border-radius:999px;padding:8px 16px;font:inherit;cursor:pointer}
+.res{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.res div{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;transition:filter .25s ease,opacity .25s ease}
+.res b{display:block;font-size:34px}.res:hover div{filter:blur(4px);opacity:.6}.res:hover div.k{filter:none;opacity:1}.res .k b{color:var(--ac)}
+.dock{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:flex;align-items:flex-end;gap:10px;height:76px;padding:10px 14px;background:rgba(23,23,28,.92);border:1px solid var(--line);border-radius:22px}
+.dock span{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:22px;background:#24242b;transform-origin:bottom center;transition:transform .12s ease}
+@media (max-width:600px){.res{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}::view-transition-group(*){animation:none!important}}
+</style></head><body><main>
+<h1>4 movimientos que hacen que una web parezca cara</h1><p class="s">Pasa el ratón y toca: cada bloque es uno de los prompts.</p>
+
+<h2>1 · Fundido entre pestañas</h2>
+<div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-p="0">Tienda</button><button role="tab" aria-selected="false" data-p="1">Envíos</button><button role="tab" aria-selected="false" data-p="2">Devoluciones</button></div>
+<div class="panel"><div class="pane on">Lo viejo se va mientras entra lo nuevo. Sin salto.</div><div class="pane">Esta pestaña entra mientras la otra se va.</div><div class="pane">Prueba a cambiar rápido: nunca hay un hueco en blanco.</div></div>
+
+<h2>2 · Elemento compartido</h2>
+<div id="lista" class="grid"></div>
+
+<h2>3 · Foco en la cifra</h2>
+<div class="res"><div><span>Pedidos</span><b>—</b></div><div class="k"><span>La que importa</span><b>Tu cifra</b></div><div><span>Visitas</span><b>—</b></div></div>
+<p class="s" style="margin-top:10px">Pasa el ratón: todo se desenfoca menos la cifra.</p>
+<h2>4 · Menú que crece (abajo)</h2><p class="s">Acerca el ratón al menú de abajo.</p>
+</main>
+<nav class="dock" aria-label="Menú"><span>🏠</span><span>🛍️</span><span>💬</span><span>📦</span><span>⚙️</span></nav>
+<script>
+const tabs=[...document.querySelectorAll('[role=tab]')],panes=[...document.querySelectorAll('.pane')];
+tabs.forEach(t=>t.onclick=()=>{tabs.forEach(x=>x.setAttribute('aria-selected',x===t));panes.forEach((p,i)=>p.classList.toggle('on',i==t.dataset.p))});
+const items=[['Bálsamo','#6b3a2e'],['Sérum','#2e4a6b'],['Crema','#4a6b2e']];
+const lista=document.getElementById('lista');
+const vt=f=>document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches?document.startViewTransition(f):f();
+function pintaLista(){lista.className='grid';lista.innerHTML=items.map((x,i)=>`<button class="card" data-i="${i}"><div class="ph" style="background:${x[1]};view-transition-name:ph${i}"></div><h3 style="view-transition-name:t${i}">${x[0]}</h3></button>`).join('');
+ lista.querySelectorAll('.card').forEach(c=>c.onclick=()=>vt(()=>pintaDet(+c.dataset.i)))}
+function pintaDet(i){const x=items[i];lista.className='';lista.innerHTML=`<div class="det"><div class="ph" style="background:${x[1]};view-transition-name:ph${i}"></div><h3 style="view-transition-name:t${i}">${x[0]}</h3><p class="s">El título y la foto han viajado hasta aquí.</p><button>Volver</button></div>`;
+ lista.querySelector('button').onclick=()=>vt(pintaLista)}
+pintaLista();
+const dock=document.querySelector('.dock'),ic=[...dock.children];
+if(matchMedia('(hover:hover)').matches&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+ dock.onmousemove=e=>ic.forEach(s=>{const r=s.getBoundingClientRect(),d=Math.abs(e.clientX-(r.left+r.width/2));s.style.transform=`scale(${1+.5*Math.max(0,1-d/120)})`});
+ dock.onmouseleave=()=>ic.forEach(s=>s.style.transform='')}
+</script></body></html>
