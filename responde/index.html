@@ -1,0 +1,42 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>RESPONDE · reseñas</title><style>:root{--bg:#0d0d0f;--tx:#ececec;--mu:#9a9aa2;--ac:#ff5a1f;--card:#17171b}body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:720px;margin:auto;padding:40px 16px 80px}h1{font-size:30px;line-height:1.2}h2{font-size:21px;margin-top:36px}a{color:var(--ac)}pre{background:var(--card);border:1px solid #2a2a30;border-radius:12px;padding:16px;white-space:pre-wrap;font-size:14.5px;position:relative}code{font-family:ui-monospace,Consolas,monospace}button.cp{position:absolute;top:8px;right:8px;background:var(--ac);color:#fff;border:0;border-radius:8px;padding:6px 10px;font-weight:600;cursor:pointer}.pie{color:var(--mu);font-size:14px;margin-top:48px;border-top:1px solid #2a2a30;padding-top:16px}</style></head><body><main><h1>Contesta todas tus reseñas en un rato · prompt y pasos (regalo de «comenta RESPONDE»)</h1>
+<p>Lo que hace: Claude lee tus reseñas y la ficha de tu negocio, te dice qué quejas se repiten y cuántas veces, y te deja escrita una respuesta para cada reseña floja. Tú las lees, las retocas si hace falta y las pegas en Google.</p>
+<h2>Lo que necesitas</h2>
+<ul>
+<li>Claude Code (o un Proyecto de Claude, si no usas la terminal).</li>
+<li>Una carpeta con 2 archivos: <code>resenas.csv</code> y <code>negocio.md</code>.</li>
+</ul>
+<h2>Paso 1 · Tus reseñas en un archivo</h2>
+<p>Copia tus reseñas (fecha, estrellas, nombre o iniciales, texto) en una hoja de cálculo y guárdala como <code>resenas.csv</code>:</p>
+<pre><code>fecha,estrellas,autor,texto
+2026-11-25,2,M. G.,&quot;Esperé 25 minutos en recepción y nadie me avisó.&quot;
+2026-11-22,1,A. P.,&quot;Imposible coger cita por teléfono.&quot;
+</code></pre>
+<p>Pon solo iniciales: no hace falta el nombre completo del cliente.</p>
+<h2>Paso 2 · La ficha de tu negocio (<code>negocio.md</code>)</h2>
+<p>Sin ficha, Claude se inventa soluciones. Rellena esto con lo tuyo:</p>
+<pre><code># &lt;Nombre del negocio&gt;
+- Qué hacemos:
+- Horario:
+- Cómo se pide cita (y qué canal se atiende de verdad):
+- Precios y condiciones (bonos, caducidad, cancelaciones):
+- Aparcamiento / cómo llegar:
+- Lo que ya hemos cambiado o vamos a cambiar:
+- Tono: (de tú o de usted, cercano o formal)
+- Firma: (quién firma las respuestas)
+</code></pre>
+<h2>Paso 3 · El prompt</h2>
+<p>Abre la carpeta con Claude Code (<code>claude</code> en la terminal, dentro de la carpeta) y pega esto:</p>
+<pre><code>Lee resenas.csv y negocio.md.
+1) Dime las quejas que más se repiten y cuántas veces sale cada una, de más a menos.
+2) Escribe una respuesta para cada reseña de 1 a 3 estrellas: corta (máximo 4 frases), con el tono y la firma de negocio.md, sin excusas, y con una solución concreta sacada de negocio.md.
+3) No inventes nada que no esté en negocio.md: ni descuentos, ni horarios, ni promesas. Si una queja no tiene solución en la ficha, márcala con [FALTA DECIDIR] en vez de inventarla.
+4) Guárdalo todo en respuestas.md: primero el resumen de quejas, luego cada respuesta con la reseña original encima.
+</code></pre>
+<h2>Paso 4 · Revisa antes de publicar</h2>
+<ul>
+<li>Lee cada respuesta. Si algo no es verdad en tu negocio, se cambia en <code>negocio.md</code> y se repite el paso 3.</li>
+<li>Busca los [FALTA DECIDIR]: son las decisiones que tienes que tomar tú (por ejemplo, qué haces con quien espera media hora).</li>
+<li>Publica a mano desde tu perfil de Google. No lo automatices hasta que te fíes de las respuestas.</li>
+</ul>
+<h2>Paso 5 · Usa el resumen</h2>
+<p>La lista de quejas repetidas vale más que las respuestas: si 4 de 11 reseñas malas hablan del teléfono, el problema no es la reseña, es el teléfono. Arregla eso primero.</p><p class="pie">Regalo de <a href="https://instagram.com/gerardleon.ai">@gerardleon.ai</a> · sígueme para más como este: cada semana enseño a montar con IA algo que le quita faena a tu negocio.</p></main><script>document.querySelectorAll('pre').forEach(p=>{const b=document.createElement('button');b.className='cp';b.textContent='Copiar';b.onclick=()=>{navigator.clipboard.writeText(p.innerText.replace(/^Copiar/,'').replace(/Copiar$/,'').trim());b.textContent='Copiado';setTimeout(()=>b.textContent='Copiar',1500)};p.appendChild(b)})</script></body></html>
